@@ -70,7 +70,7 @@ const COPY_LIST = [
     ["res/decoder-ring/**", "webapp/decoder-ring"],
     ["node_modules/matrix-react-sdk/res/media/**", "webapp/media"],
     ["node_modules/@matrix-org/olm/olm_legacy.js", "webapp", { directwatch: 1 }],
-    ["./config.json", "webapp", { directwatch: 1 }],
+    ["conf.d/**", "webapp", { directwatch: 1 }],
     ["contribute.json", "webapp"],
 ];
 

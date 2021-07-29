@@ -1,0 +1,19 @@
+{
+    "default_server_name": "nya.one",
+    "brand": "NyaOne 喵窝",
+    "bug_report_endpoint_url": "mailto:support@nya.one",
+    "showLabsSettings": true,
+    "piwik": false,
+    "enable_presence_by_hs_url": {
+        "https://nya.one": true
+    },
+    "terms_and_conditions_links": [
+        {
+            "url": "https://nya.one/@Candinya/pages/AUP",
+            "text": "合理使用公约"
+        }
+    ],
+    "settingDefaults": {
+        "language": "zh-hans"
+    }
+}
