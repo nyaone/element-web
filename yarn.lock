@@ -5807,10 +5807,10 @@ hex-color-regex@^1.1.0:
   resolved "https://registry.yarnpkg.com/hex-color-regex/-/hex-color-regex-1.1.0.tgz#4c06fccb4602fe2602b3c93df82d7e7dbf1a8a8e"
   integrity sha512-l9sfDFsuqtOqKDsQdqrMRk0U85RZc0RtOR9yPI7mRVOa4FsR/BVnZ0shmQRM96Ji99kYZP/7hn1cedc1+ApsTQ==
 
-highlight.js@^10.5.0:
-  version "10.7.3"
-  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-10.7.3.tgz#697272e3991356e40c3cac566a74eef681756531"
-  integrity sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==
+highlight.js@^11.3.1:
+  version "11.3.1"
+  resolved "https://registry.yarnpkg.com/highlight.js/-/highlight.js-11.3.1.tgz#813078ef3aa519c61700f84fe9047231c5dc3291"
+  integrity sha512-PUhCRnPjLtiLHZAQ5A/Dt5F8cWZeMyj9KRsACsWT+OD6OP0x6dp5OmT5jdx0JgEyPxPZZIPQpRN2TciUT7occw==
 
 hmac-drbg@^1.0.1:
   version "1.0.1"
@@ -7771,10 +7771,10 @@ mathml-tag-names@^2.1.3:
   resolved "https://registry.yarnpkg.com/mathml-tag-names/-/mathml-tag-names-2.1.3.tgz#4ddadd67308e780cf16a47685878ee27b736a0a3"
   integrity sha512-APMBEanjybaPzUrfqU0IMU5I0AswKMH7k8OTLs0vvV4KZpExkTkY87nR/zpbuTPj+gARop7aGUbl11pnDfW6xg==
 
-matrix-js-sdk@14.0.1:
-  version "14.0.1"
-  resolved "https://registry.yarnpkg.com/matrix-js-sdk/-/matrix-js-sdk-14.0.1.tgz#5984d9fafb2eda435fbe7d04a0daf37b48d595fd"
-  integrity sha512-+x+TaftVUXY8otBBSEHuVQp1B9UACEcHuKxmocFN/cmsjJGlk3z8hmthMbwnyq3HyOX9apme1TdbqqsoC2IlWg==
+matrix-js-sdk@15.0.0:
+  version "15.0.0"
+  resolved "https://registry.yarnpkg.com/matrix-js-sdk/-/matrix-js-sdk-15.0.0.tgz#b28975074d7a938770d8f40ad0088bb476a6bdcf"
+  integrity sha512-IgpmPY3DVD3Oj+TRIWsxZCTnKU2J8iVry5a7qIXelsroCxcV5/FKs/C3kphv+nFF0afMBdLLwj+n3Hlf1tdjuA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     another-json "^0.2.0"
@@ -7795,10 +7795,10 @@ matrix-mock-request@^1.2.3:
     bluebird "^3.5.0"
     expect "^1.20.2"
 
-matrix-react-sdk@3.32.1:
-  version "3.32.1"
-  resolved "https://registry.yarnpkg.com/matrix-react-sdk/-/matrix-react-sdk-3.32.1.tgz#430ac07a1b51359e4c3dce1c5289afd67392f675"
-  integrity sha512-F2Wr0aEI/3S1naMVk79/nPC1oaEDjj4RaEu+qddhiO430/Te2oICN/r1G6SeZyfdg1ijO2+raNNw2xcszaZZOg==
+matrix-react-sdk@3.33.0:
+  version "3.33.0"
+  resolved "https://registry.yarnpkg.com/matrix-react-sdk/-/matrix-react-sdk-3.33.0.tgz#02d3afeb2954aa113a010686f845b2f1fcdb5bb7"
+  integrity sha512-K+lZlY97rFp2nwDBpxGGx1og8mcSrJdLGVvW3gEn2zIlP3BvS9Rcg+G4Hdy7ORemaSw6JnZWCfJVBPXWQvixeA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@sentry/browser" "^6.11.0"
@@ -7822,14 +7822,14 @@ matrix-react-sdk@3.32.1:
     focus-visible "^5.2.0"
     gfm.css "^1.1.2"
     glob-to-regexp "^0.4.1"
-    highlight.js "^10.5.0"
+    highlight.js "^11.3.1"
     html-entities "^1.4.0"
     is-ip "^3.1.0"
     jszip "^3.7.0"
     katex "^0.12.0"
     linkifyjs "^2.1.9"
     lodash "^4.17.20"
-    matrix-js-sdk "14.0.1"
+    matrix-js-sdk "15.0.0"
     matrix-widget-api "^0.1.0-beta.16"
     minimist "^1.2.5"
     opus-recorder "^8.0.3"
