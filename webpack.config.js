@@ -9,16 +9,24 @@ const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackInjectPreload = require('@principalstudio/html-webpack-inject-preload');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const SentryCliPlugin = require("@sentry/webpack-plugin");
 
 dotenv.config();
 let ogImageUrl = process.env.RIOT_OG_IMAGE_URL;
 if (!ogImageUrl) ogImageUrl = 'https://app.element.io/themes/element/img/logos/opengraph.png';
+
+if (!process.env.VERSION) {
+    console.warn("Unset VERSION variable - this may affect build output");
+    process.env.VERSION = "!!UNSET!!";
+}
 
 const cssThemes = {
     // CSS themes
     "theme-legacy-light": "./node_modules/matrix-react-sdk/res/themes/legacy-light/css/legacy-light.scss",
     "theme-legacy-dark": "./node_modules/matrix-react-sdk/res/themes/legacy-dark/css/legacy-dark.scss",
     "theme-light": "./node_modules/matrix-react-sdk/res/themes/light/css/light.scss",
+    "theme-light-high-contrast":
+        "./node_modules/matrix-react-sdk/res/themes/light-high-contrast/css/light-high-contrast.scss",
     "theme-dark": "./node_modules/matrix-react-sdk/res/themes/dark/css/dark.scss",
     "theme-light-custom": "./node_modules/matrix-react-sdk/res/themes/light-custom/css/light-custom.scss",
     "theme-dark-custom": "./node_modules/matrix-react-sdk/res/themes/dark-custom/css/dark-custom.scss",
@@ -528,6 +536,13 @@ module.exports = (env, argv) => {
             }),
             useHMR && new ReactRefreshWebpackPlugin(fullPageErrors ? undefined : { overlay: { entry: false } }),
 
+            // upload to sentry if sentry env is present
+            process.env.SENTRY_DSN &&
+                new SentryCliPlugin({
+                    release: process.env.VERSION,
+                    include: "./webapp",
+                }),
+            new webpack.EnvironmentPlugin(['VERSION']),
         ].filter(Boolean),
 
         output: {
