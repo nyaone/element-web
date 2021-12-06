@@ -1,6 +1,6 @@
 {
   "name": "element-web",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "A feature-rich client for Matrix.org",
   "author": "New Vector Ltd.",
   "repository": {
@@ -60,8 +60,8 @@
     "gfm.css": "^1.1.2",
     "jsrsasign": "^10.2.0",
     "katex": "^0.12.0",
-    "matrix-js-sdk": "15.1.1",
-    "matrix-react-sdk": "3.35.1",
+    "matrix-js-sdk": "15.2.0",
+    "matrix-react-sdk": "3.36.0",
     "matrix-widget-api": "^0.1.0-beta.17",
     "prop-types": "^15.7.2",
     "react": "17.0.2",
@@ -99,7 +99,7 @@
     "@types/sanitize-html": "^2.3.1",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
-    "allchange": "^1.0.5",
+    "allchange": "^1.0.6",
     "autoprefixer": "^9.8.6",
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.2.2",
