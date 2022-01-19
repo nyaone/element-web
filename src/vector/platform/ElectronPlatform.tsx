@@ -52,10 +52,10 @@ import ToastStore from "matrix-react-sdk/src/stores/ToastStore";
 import GenericExpiringToast from "matrix-react-sdk/src/components/views/toasts/GenericExpiringToast";
 import SettingsStore from 'matrix-react-sdk/src/settings/SettingsStore';
 import { IMatrixProfile, IEventWithRoomId as IMatrixEvent, IResultRoomEvents } from "matrix-js-sdk/src/@types/search";
+import { logger } from "matrix-js-sdk/src/logger";
+import { MatrixEvent } from "matrix-js-sdk/src/models/event";
 
 import VectorBasePlatform from './VectorBasePlatform';
-
-import { logger } from "matrix-js-sdk/src/logger";
 
 const electron = window.electron;
 const isMac = navigator.platform.toUpperCase().includes('MAC');
@@ -258,12 +258,16 @@ export default class ElectronPlatform extends VectorBasePlatform {
             dis.fire(Action.ViewUserSettings);
         });
 
-        electron.on('userDownloadCompleted', (ev, { path, name }) => {
-            const key = `DOWNLOAD_TOAST_${path}`;
+        electron.on('userDownloadCompleted', (ev, { id, name }) => {
+            const key = `DOWNLOAD_TOAST_${id}`;
 
             const onAccept = () => {
-                electron.send('userDownloadOpen', { path });
+                electron.send('userDownloadAction', { id, open: true });
                 ToastStore.sharedInstance().dismissToast(key);
+            };
+
+            const onDismiss = () => {
+                electron.send('userDownloadAction', { id });
             };
 
             ToastStore.sharedInstance().addOrReplaceToast({
@@ -274,6 +278,7 @@ export default class ElectronPlatform extends VectorBasePlatform {
                     acceptLabel: _t("Open"),
                     onAccept,
                     dismissLabel: _t("Dismiss"),
+                    onDismiss,
                     numSeconds: 10,
                 },
                 component: GenericExpiringToast,
@@ -368,7 +373,7 @@ export default class ElectronPlatform extends VectorBasePlatform {
         return true;
     }
 
-    displayNotification(title: string, msg: string, avatarUrl: string, room: Room): Notification {
+    displayNotification(title: string, msg: string, avatarUrl: string, room: Room, ev?: MatrixEvent): Notification {
         // GNOME notification spec parses HTML tags for styling...
         // Electron Docs state all supported linux notification systems follow this markup spec
         // https://github.com/electron/electron/blob/master/docs/tutorial/desktop-environment-integration.md#linux
@@ -379,27 +384,24 @@ export default class ElectronPlatform extends VectorBasePlatform {
             msg = msg.replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
-        // Notifications in Electron use the HTML5 notification API
-        const notifBody = {
-            body: msg,
-            silent: true, // we play our own sounds
-        };
-        if (avatarUrl) notifBody['icon'] = avatarUrl;
-        const notification = new window.Notification(title, notifBody);
+        const notification = super.displayNotification(
+            title,
+            msg,
+            avatarUrl,
+            room,
+            ev,
+        );
 
+        const handler = notification.onclick as Function;
         notification.onclick = () => {
-            dis.dispatch({
-                action: 'view_room',
-                room_id: room.roomId,
-            });
-            window.focus();
+            handler?.();
             this.ipcCall('focusWindow');
         };
 
         return notification;
     }
 
-    loudNotification(ev: Event, room: Object) {
+    loudNotification(ev: MatrixEvent, room: Room) {
         electron.send('loudNotification');
     }
 

@@ -29,6 +29,7 @@ const INCLUDE_LANGS = [
     {'value': 'he', 'label': 'עברית'},
     {'value': 'hi', 'label': 'हिन्दी'},
     {'value': 'hu', 'label': 'Magyar'},
+    {'value': 'id', 'label': 'Bahasa Indonesia'},
     {'value': 'is', 'label': 'íslenska'},
     {'value': 'it', 'label': 'Italiano'},
     {'value': 'ja', 'label': '日本語'},
@@ -52,6 +53,7 @@ const INCLUDE_LANGS = [
     {'value': 'th', 'label': 'ไทย'},
     {'value': 'tr', 'label': 'Türkçe'},
     {'value': 'uk', 'label': 'українська мова'},
+    {'value': 'vi', 'label': 'Tiếng Việt'},
     {'value': 'vls', 'label': 'West-Vlaams'},
     {'value': 'zh_Hans', 'label': '简体中文'}, // simplified chinese
     {'value': 'zh_Hant', 'label': '繁體中文'}, // traditional chinese

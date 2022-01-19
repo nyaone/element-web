@@ -14,9 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// We have to trick webpack into loading our CSS for us.
-require("./index.scss");
-
 import { KJUR } from 'jsrsasign';
 import {
     IOpenIDCredentials,
@@ -25,8 +22,10 @@ import {
     WidgetApi,
 } from "matrix-widget-api";
 import { ElementWidgetActions } from "matrix-react-sdk/src/stores/widgets/ElementWidgetActions";
-
 import { logger } from "matrix-js-sdk/src/logger";
+
+// We have to trick webpack into loading our CSS for us.
+require("./index.scss");
 
 const JITSI_OPENIDTOKEN_JWT_AUTH = 'openidtoken-jwt';
 
@@ -47,6 +46,7 @@ let jitsiAuth: string;
 let roomId: string;
 let openIdToken: IOpenIDCredentials;
 let roomName: string;
+let startAudioOnly: boolean;
 
 let widgetApi: WidgetApi;
 let meetApi: any; // JitsiMeetExternalAPI
@@ -108,6 +108,7 @@ let meetApi: any; // JitsiMeetExternalAPI
         jitsiAuth = qsParam('auth', true);
         roomId = qsParam('roomId', true);
         roomName = qsParam('roomName', true);
+        startAudioOnly = qsParam('isAudioOnly', true) === "true";
 
         if (widgetApi) {
             await readyPromise;
@@ -238,6 +239,9 @@ function joinConference() { // event handler bound in HTML
             SHOW_WATERMARK_FOR_GUESTS: false,
             MAIN_TOOLBAR_BUTTONS: [],
             VIDEO_LAYOUT_FIT: "height",
+        },
+        configOverwrite: {
+            startAudioOnly,
         },
         jwt: jwt,
     };
