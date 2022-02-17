@@ -8056,10 +8056,10 @@ matrix-events-sdk@^0.0.1-beta.6:
   resolved "https://registry.yarnpkg.com/matrix-events-sdk/-/matrix-events-sdk-0.0.1-beta.6.tgz#9001090ed2e2bf29efc113d6b29871bcc6520749"
   integrity sha512-VMqPXe3Bg4R9yC9PNqGv6bDFwWlVYadYxp0Ke1ihhXUCpGcx7e28kOYcqK2T3RxLXK4KK7VH4JRbY53Do3r+Fw==
 
-matrix-js-sdk@15.5.1:
-  version "15.5.1"
-  resolved "https://registry.yarnpkg.com/matrix-js-sdk/-/matrix-js-sdk-15.5.1.tgz#fb67b7f8c74414af71790d1ac0dbb99c1281ec2e"
-  integrity sha512-7oCrDRZ5NxfimfZgw9cM9a89WxBj1i3cDiwb8PLNv7KnYgnI6z06WUwha2EhohTUd2v69h2AdXSZi2jD6QuHBA==
+matrix-js-sdk@15.5.2:
+  version "15.5.2"
+  resolved "https://registry.yarnpkg.com/matrix-js-sdk/-/matrix-js-sdk-15.5.2.tgz#cdb37df107b33f383c4476ff25dc3759399da577"
+  integrity sha512-ohHTQs+w2gL3D+y4fL0yjahAyUUahDyvcIJoo+L+szmzqSmCJ65J14BYgIUmVcTd2ZMUzgAKVDq/LcfQd23FyA==
   dependencies:
     "@babel/runtime" "^7.12.5"
     another-json "^0.2.0"
@@ -8081,10 +8081,10 @@ matrix-mock-request@^1.2.3:
     bluebird "^3.5.0"
     expect "^1.20.2"
 
-matrix-react-sdk@3.40.0:
-  version "3.40.0"
-  resolved "https://registry.yarnpkg.com/matrix-react-sdk/-/matrix-react-sdk-3.40.0.tgz#0c9c7d536538121f318ac7914e5644060ff7ca2e"
-  integrity sha512-rv+EAFKDrMb+rQaeWyxeOEuAl0rhWj7JWMRcpD7QvQlz3ru7azGtCD1bQHPV9VZEIpR4PLMMWeNHX0tdv9d1yw==
+matrix-react-sdk@3.40.1:
+  version "3.40.1"
+  resolved "https://registry.yarnpkg.com/matrix-react-sdk/-/matrix-react-sdk-3.40.1.tgz#daa26b34dbd7e71497a54db3d04ad72c53445add"
+  integrity sha512-b214Yxv+6Ch6Q0RmBHGxutPt3Ew7xumtyzTMFHzIDIkkLB+0PoQTSSomT6g4T3YNcBwMstAwxzFaVu/1m42RlQ==
   dependencies:
     "@babel/runtime" "^7.12.5"
     "@sentry/browser" "^6.11.0"
@@ -8121,7 +8121,7 @@ matrix-react-sdk@3.40.0:
     maplibre-gl "^1.15.2"
     matrix-analytics-events "github:matrix-org/matrix-analytics-events.git#dfa6feaa12bcfc8e99b05a148e12fff7f9d62f08"
     matrix-events-sdk "^0.0.1-beta.6"
-    matrix-js-sdk "15.5.1"
+    matrix-js-sdk "15.5.2"
     matrix-widget-api "^0.1.0-beta.18"
     minimist "^1.2.5"
     opus-recorder "^8.0.3"
