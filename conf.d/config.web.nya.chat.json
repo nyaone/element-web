@@ -1,0 +1,39 @@
+{
+    "default_server_name": "nya.chat",
+    "brand": "NyaChat",
+    "integrations_ui_url": "https://dimension.nya.chat/",
+    "integrations_rest_url": "https://dimension.nya.chat/api",
+    "integrations_widgets_urls": [],
+    "bug_report_endpoint_url": "mailto:support@nya.work",
+    "uisi_autorageshake_app": "element-auto-uisi",
+    "showLabsSettings": true,
+    "piwik": {
+        "url": "https://matomo.nyawork.dev/",
+        "siteId": 1,
+        "policyUrl": "https://nya.work/privacy"
+    },
+    "roomDirectory": {
+        "servers": [
+            "nya.chat"
+        ]
+    },
+    "enable_presence_by_hs_url": {
+        "https://matrix.nya.chat": true
+    },
+    "terms_and_conditions_links": [
+        {
+            "url": "https://nya.work/privacy",
+            "text": "Privacy Policy"
+        }
+    ],
+    "sentry": {
+        "dsn": "https://2860254f8ae748b99416c64e51fdf684@sentry.nyawork.dev/8",
+        "environment": "develop"
+    },
+    "features": {
+        "feature_spotlight": true
+    },
+    "settingDefaults": {
+        "language": "zh-hans"
+    }
+}
