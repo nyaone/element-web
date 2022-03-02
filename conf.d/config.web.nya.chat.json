@@ -1,9 +1,10 @@
 {
     "default_server_name": "nya.chat",
     "brand": "NyaChat",
-    "integrations_ui_url": "https://dimension.nya.chat/",
-    "integrations_rest_url": "https://dimension.nya.chat/api",
-    "integrations_widgets_urls": [],
+    "integrations_ui_url": "https://dimension.nya.chat/element",
+    "integrations_rest_url": "https://dimension.nya.chat/api/v1/scalar",
+    "integrations_widgets_urls": ["https://dimension.nya.chat/widgets"],
+    "integrations_jitsi_widget_url": "https://dimension.nya.chat/widgets/jitsi",
     "bug_report_endpoint_url": "mailto:support@nya.work",
     "uisi_autorageshake_app": "element-auto-uisi",
     "showLabsSettings": true,
