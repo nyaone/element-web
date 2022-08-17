@@ -9,14 +9,15 @@ const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackInjectPreload = require('@principalstudio/html-webpack-inject-preload');
 const SentryCliPlugin = require("@sentry/webpack-plugin");
+const { version } = require("./package.json");
 
 dotenv.config();
 let ogImageUrl = process.env.RIOT_OG_IMAGE_URL;
 if (!ogImageUrl) ogImageUrl = 'https://app.element.io/themes/element/img/logos/opengraph.png';
 
 if (!process.env.VERSION) {
-    console.warn("Unset VERSION variable - this may affect build output");
-    process.env.VERSION = "!!UNSET!!";
+    console.warn("Unset VERSION variable - use package default");
+    process.env.VERSION = version;
 }
 
 const cssThemes = {

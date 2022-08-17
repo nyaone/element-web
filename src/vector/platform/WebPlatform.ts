@@ -146,11 +146,8 @@ export default class WebPlatform extends VectorBasePlatform {
             }
 
             // Set updated as a cachebusting query param and reload the page.
-            //// Nya comment: updated page string is too long for other components (OAuth2 login / custom integrations), 
-            //// which will break them, so here we use current time as the cachebuster.
             const url = new URL(window.location.href);
-            // url.searchParams.set("updated", newVersion);
-            url.searchParams.set("updated", new Date().toISOString());
+            url.searchParams.set("updated", newVersion);
             console.log("Update reloading to " + url.toString());
             window.location.href = url.toString();
         });
