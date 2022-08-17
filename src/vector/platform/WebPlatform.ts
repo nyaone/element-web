@@ -128,13 +128,7 @@ export default class WebPlatform extends VectorBasePlatform {
         // Ideally, loading an old copy would be impossible with the
         // cache-control: nocache HTTP header set, but Firefox doesn't always obey it :/
         const currentProcessVersion = process.env.VERSION;
-        if (typeof currentProcessVersion !== 'string') {
-            // Something might be wrong
-            // Print debug info
-            console.warn("Cannot get proper version from process, current process.env value: ", process.env);
-            // Maybe skip ?
-        }
-        console.log("startUpdater, current version is " + getNormalizedAppVersion(currentProcessVersion));
+        console.log("startUpdater, current version is ", currentProcessVersion, "normalized: " + getNormalizedAppVersion(currentProcessVersion));
         this.pollForUpdate((version: string, newVersion: string) => {
             const query = parseQs(location);
             if (query.updated) {
