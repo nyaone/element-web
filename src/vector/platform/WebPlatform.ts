@@ -127,7 +127,14 @@ export default class WebPlatform extends VectorBasePlatform {
         //
         // Ideally, loading an old copy would be impossible with the
         // cache-control: nocache HTTP header set, but Firefox doesn't always obey it :/
-        console.log("startUpdater, current version is " + getNormalizedAppVersion(process.env.VERSION));
+        const currentProcessVersion = process.env.VERSION;
+        if (typeof currentProcessVersion !== 'string') {
+            // Something might be wrong
+            // Print debug info
+            console.warn("Cannot get proper version from process, current process.env value: ", process.env);
+            // Maybe skip ?
+        }
+        console.log("startUpdater, current version is " + getNormalizedAppVersion(currentProcessVersion));
         this.pollForUpdate((version: string, newVersion: string) => {
             const query = parseQs(location);
             if (query.updated) {
@@ -139,8 +146,11 @@ export default class WebPlatform extends VectorBasePlatform {
             }
 
             // Set updated as a cachebusting query param and reload the page.
+            //// Nya comment: updated page string is too long for other components (OAuth2 login / custom integrations), 
+            //// which will break them, so here we use current time as the cachebuster.
             const url = new URL(window.location.href);
-            url.searchParams.set("updated", newVersion);
+            // url.searchParams.set("updated", newVersion);
+            url.searchParams.set("updated", new Date().toISOString());
             console.log("Update reloading to " + url.toString());
             window.location.href = url.toString();
         });

@@ -9,7 +9,6 @@ const TerserPlugin = require('terser-webpack-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackInjectPreload = require('@principalstudio/html-webpack-inject-preload');
 const SentryCliPlugin = require("@sentry/webpack-plugin");
-const { EnvironmentPlugin } = require('webpack');
 
 dotenv.config();
 let ogImageUrl = process.env.RIOT_OG_IMAGE_URL;
@@ -562,8 +561,6 @@ module.exports = (env, argv) => {
 
         plugins: [
             ...moduleReplacementPlugins,
-
-            new EnvironmentPlugin(['VERSION']),
 
             // This exports our CSS using the splitChunks and loaders above.
             new MiniCssExtractPlugin({
