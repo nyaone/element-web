@@ -564,7 +564,9 @@ module.exports = (env, argv) => {
             ...moduleReplacementPlugins,
 
             new DefinePlugin({
-                'process.env.VERSION': process.env.VERSION,
+                'process.env': {
+                    VERSION: process.env.VERSION,
+                },
             }),
 
             // This exports our CSS using the splitChunks and loaders above.
