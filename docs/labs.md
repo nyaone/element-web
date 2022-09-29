@@ -158,15 +158,15 @@ Threads can be access by clicking their summary below the root event on the room
 
 This feature might work in degraded mode if the homeserver a user is connected to does not advertise support for the unstable feature `org.matrix.msc3440`  when calling the `/versions` API endpoint.
 
-## Right-click Message Context Menu (`feature_message_right_click_context_menu`)
-
-Enables showing a right-click context menu when right-clicking messages in the
-timeline. This menu shows options that can usually be found in the message
-action bar or in the message options.
-
 ## Video rooms (`feature_video_rooms`)
 
 Enables support for creating and joining video rooms, which are persistent video chats that users can jump in and out of.
+
+## Element Call video rooms (`feature_element_call_video_rooms`) [In Development]
+
+Enables support for video rooms that use Element Call rather than Jitsi, and causes the 'New video room' option to create Element Call video rooms rather than Jitsi ones.
+
+This flag will not have any effect unless `feature_video_rooms` is also enabled.
 
 ## Rich text in room topics (`feature_html_topic`) [In Development]
 
