@@ -632,7 +632,7 @@ module.exports = (env, argv) => {
                         console.log(`::warning title=Sentry error::${err.message}`);
                     },
                 }),
-            new webpack.EnvironmentPlugin({
+            new webpack.DefinePlugin({
                 __APP_VERSION__: JSON.stringify(version),
             }),
         ].filter(Boolean),
