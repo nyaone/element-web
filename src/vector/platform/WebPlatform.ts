@@ -115,7 +115,7 @@ export default class WebPlatform extends VectorBasePlatform {
     }
 
     public getAppVersion(): Promise<string> {
-        return Promise.resolve(getNormalizedAppVersion(process.env.VERSION));
+        return Promise.resolve(getNormalizedAppVersion(__APP_VERSION__));
     }
 
     public startUpdater(): void {
@@ -127,7 +127,7 @@ export default class WebPlatform extends VectorBasePlatform {
         //
         // Ideally, loading an old copy would be impossible with the
         // cache-control: nocache HTTP header set, but Firefox doesn't always obey it :/
-        const currentProcessVersion = process.env.VERSION;
+        const currentProcessVersion = __APP_VERSION__;
         console.log("startUpdater, current version is ", currentProcessVersion, "normalized: " + getNormalizedAppVersion(currentProcessVersion));
         this.pollForUpdate((version: string, newVersion: string) => {
             const query = parseQs(location);
@@ -157,7 +157,7 @@ export default class WebPlatform extends VectorBasePlatform {
         showNoUpdate?: () => void,
     ): Promise<UpdateStatus> => {
         return this.getMostRecentVersion().then((mostRecentVersion) => {
-            const currentVersion = getNormalizedAppVersion(process.env.VERSION);
+            const currentVersion = getNormalizedAppVersion(__APP_VERSION__);
 
             if (currentVersion !== mostRecentVersion) {
                 if (this.shouldShowUpdate(mostRecentVersion)) {

@@ -15,11 +15,6 @@ dotenv.config();
 let ogImageUrl = process.env.RIOT_OG_IMAGE_URL;
 if (!ogImageUrl) ogImageUrl = 'https://app.element.io/themes/element/img/logos/opengraph.png';
 
-if (!process.env.VERSION) {
-    console.warn("Unset VERSION variable - use package default");
-    process.env.VERSION = version;
-}
-
 const cssThemes = {
     // CSS themes
     "theme-legacy-light": "./node_modules/matrix-react-sdk/res/themes/legacy-light/css/legacy-light.pcss",
@@ -630,14 +625,16 @@ module.exports = (env, argv) => {
             // upload to sentry if sentry env is present
             process.env.SENTRY_DSN &&
                 new SentryCliPlugin({
-                    release: process.env.VERSION,
+                    release: version,
                     include: "./webapp/bundles",
                     errorHandler: (err, invokeErr, compilation) => {
                         compilation.warnings.push('Sentry CLI Plugin: ' + err.message);
                         console.log(`::warning title=Sentry error::${err.message}`);
                     },
                 }),
-            new webpack.EnvironmentPlugin(['VERSION']),
+            new webpack.EnvironmentPlugin({
+                __APP_VERSION__: JSON.stringify(version),
+            }),
         ].filter(Boolean),
 
         output: {
