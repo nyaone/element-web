@@ -119,6 +119,7 @@ module.exports = (env, argv) => {
             fs: 'empty',
             net: 'empty',
             tls: 'empty',
+            crypto: 'empty',
         },
 
         entry: {
