@@ -11,6 +11,11 @@ const HtmlWebpackInjectPreload = require('@principalstudio/html-webpack-inject-p
 const SentryCliPlugin = require("@sentry/webpack-plugin");
 const { version } = require("./package.json");
 
+// Environment variables
+// RIOT_OG_IMAGE_URL: specifies the URL to the image which should be used for the opengraph logo.
+// CSP_EXTRA_SOURCE: specifies a URL which should be appended to each CSP directive which uses 'self',
+//   this can be helpful if your deployment has redirects for old bundles, such as develop.element.io.
+
 dotenv.config();
 let ogImageUrl = process.env.RIOT_OG_IMAGE_URL;
 if (!ogImageUrl) ogImageUrl = 'https://app.element.io/themes/element/img/logos/opengraph.png';
@@ -583,6 +588,7 @@ module.exports = (env, argv) => {
                 minify: false,
                 templateParameters: {
                     og_image_url: ogImageUrl,
+                    csp_extra_source: process.env.CSP_EXTRA_SOURCE ?? "",
                 },
             }),
 
