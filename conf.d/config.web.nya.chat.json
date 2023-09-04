@@ -18,10 +18,6 @@
             "text": "Privacy Policy"
         }
     ],
-    "sentry": {
-        "dsn": "https://2860254f8ae748b99416c64e51fdf684@sentry.nyawork.dev/8",
-        "environment": "develop"
-    },
     "features": {
         "feature_spotlight": true
     },
