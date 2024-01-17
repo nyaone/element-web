@@ -59,7 +59,7 @@
   </head>
   <body style="height: 100%; margin: 0;">
     <noscript>Sorry, Element requires JavaScript to be enabled.</noscript> <!-- TODO: Translate this? -->
-    <section id="matrixchat" style="height: 100%;" class="notranslate"></section>
+    <div id="matrixchat" style="height: 100%;" class="notranslate"></div>
 
 <%
     // insert <script> tags for the JS entry points
@@ -108,5 +108,11 @@
     <audio id="remoteAudio"></audio>
     <!-- let CSS themes pass constants to the app -->
     <div id="mx_theme_accentColor"></div><div id="mx_theme_secondaryAccentColor"></div><div id="mx_theme_tertiaryAccentColor"></div>
+
+    <!-- We eagerly create these containers to ensure their CSS stacking context order is sensible -->
+    <div id="mx_PersistedElement_container"></div>
+    <div id="mx_Dialog_StaticContainer"></div>
+    <div id="mx_Dialog_Container"></div>
+    <div id="mx_ContextualMenu_Container"></div>
   </body>
 </html>
