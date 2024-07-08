@@ -25,13 +25,9 @@ import { extractErrorMessageFromError } from "matrix-react-sdk/src/components/vi
 import { parseQsFromFragment } from "./url_utils";
 import "./modernizr";
 
-// Make setImmediate available in bundle
-import "setimmediate";
-
 // Require common CSS here; this will make webpack process it into bundle.css.
 // Our own CSS (which is themed) is imported via separate webpack entry points
 // in webpack.config.js
-require("gfm.css/gfm.css");
 require("katex/dist/katex.css");
 
 /**
@@ -180,7 +176,7 @@ async function start(): Promise<void> {
         // error handling begins here
         // ##########################
         if (!acceptBrowser) {
-            await new Promise<void>((resolve) => {
+            await new Promise<void>((resolve, reject) => {
                 logger.error("Browser is missing required features.");
                 // take to a different landing page to AWOOOOOGA at the user
                 showIncompatibleBrowser(() => {
@@ -189,7 +185,7 @@ async function start(): Promise<void> {
                     }
                     logger.log("User accepts the compatibility risks.");
                     resolve();
-                });
+                }).catch(reject);
             });
         }
 
