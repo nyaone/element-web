@@ -10,6 +10,7 @@ const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const HtmlWebpackInjectPreload = require("@principalstudio/html-webpack-inject-preload");
 const { version } = require("./package.json");
 const CopyWebpackPlugin = require("copy-webpack-plugin");
+const VersionFilePlugin = require("webpack-version-file-plugin");
 
 // Environment variables
 // RIOT_OG_IMAGE_URL: specifies the URL to the image which should be used for the opengraph logo.
@@ -19,11 +20,6 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 dotenv.config();
 let ogImageUrl = process.env.RIOT_OG_IMAGE_URL;
 if (!ogImageUrl) ogImageUrl = "https://app.element.io/themes/element/img/logos/opengraph.png";
-
-if (!process.env.VERSION) {
-    console.warn("Unset VERSION variable - this may affect build output");
-    process.env.VERSION = "!!UNSET!!";
-}
 
 const cssThemes = {
     // CSS themes
@@ -98,20 +94,23 @@ module.exports = (env, argv) => {
     const devMode = nodeEnv !== "production";
     const enableMinification = !devMode && !process.env.CI_PACKAGE;
 
+    let VERSION = process.env.VERSION;
+    if (!VERSION) {
+        VERSION = require("./package.json").version;
+        if (devMode) {
+            VERSION += "-dev";
+        }
+    }
+
     const development = {};
     if (devMode) {
         // Embedded source maps for dev builds, can't use eval-source-map due to CSP
         development["devtool"] = "inline-source-map";
     } else {
-        if (process.env.CI_PACKAGE) {
-            // High quality source maps in separate .map files which include the source. This doesn't bulk up the .js
-            // payload file size, which is nice for performance but also necessary to get the bundle to a small enough
-            // size that sentry will accept the upload.
-            development["devtool"] = "source-map";
-        } else {
-            // High quality source maps in separate .map files which don't include the source
-            development["devtool"] = "nosources-source-map";
-        }
+        // High quality source maps in separate .map files which include the source. This doesn't bulk up the .js
+        // payload file size, which is nice for performance but also necessary to get the bundle to a small enough
+        // size that sentry will accept the upload.
+        development["devtool"] = "source-map";
     }
 
     // Resolve the directories for the js-sdk for later use. We resolve these early, so we
@@ -189,18 +188,6 @@ module.exports = (env, argv) => {
         },
 
         resolve: {
-            // We define an alternative import path so we can safely use src/ across the react-sdk
-            // and js-sdk. We already import from src/ where possible to ensure our source maps are
-            // extremely accurate (and because we're capable of compiling the layers manually rather
-            // than relying on partially-mangled output from babel), though we do need to fix the
-            // package level import (stuff like `import {Thing} from "matrix-js-sdk"` for example).
-            // We can't use the aliasing down below to point at src/ because that'll fail to resolve
-            // the package.json for the dependency. Instead, we rely on the package.json of each
-            // layer to have our custom alternate fields to load things in the right order. These are
-            // the defaults of webpack prepended with `matrix_src_`.
-            mainFields: ["matrix_src_browser", "matrix_src_main", "browser", "main"],
-            aliasFields: ["matrix_src_browser", "browser"],
-
             // We need to specify that TS can be resolved without an extension
             extensions: [".js", ".json", ".ts", ".tsx"],
             alias: {
@@ -233,12 +220,13 @@ module.exports = (env, argv) => {
 
                 // Polyfill needed by counterpart
                 "util": require.resolve("util/"),
-                // Polyfill needed by matrix-js-sdk/src/crypto
-                "buffer": require.resolve("buffer/"),
                 // Polyfill needed by sentry
                 "process/browser": require.resolve("process/browser"),
             },
         },
+
+        // Some of our deps have broken source maps, so we have to ignore warnings or exclude them one-by-one
+        ignoreWarnings: [/Failed to parse source map/],
 
         module: {
             noParse: [
@@ -252,6 +240,11 @@ module.exports = (env, argv) => {
                 /highlight\.js[\\/]lib[\\/]languages/,
             ],
             rules: [
+                {
+                    test: /\.js$/,
+                    enforce: "pre",
+                    use: ["source-map-loader"],
+                },
                 {
                     test: /\.(ts|js)x?$/,
                     include: (f) => {
@@ -652,10 +645,6 @@ module.exports = (env, argv) => {
                     },
                 }),
 
-            new webpack.DefinePlugin({
-                __APP_VERSION__: JSON.stringify(version),
-            }),
-
             new CopyWebpackPlugin({
                 patterns: [
                     "res/apple-app-site-association",
@@ -678,9 +667,21 @@ module.exports = (env, argv) => {
             // Automatically load buffer & process modules as we use them without explicitly
             // importing them
             new webpack.ProvidePlugin({
-                Buffer: ["buffer", "Buffer"],
                 process: "process/browser",
             }),
+
+            // We bake the version in so the app knows its version immediately
+            new webpack.DefinePlugin({ "process.env.VERSION": JSON.stringify(VERSION) }),
+
+            // But we also write it to a file which gets polled for update detection
+            new VersionFilePlugin({
+                outputFile: "version",
+                templateString: "<%= extras.VERSION %>",
+                extras: { VERSION },
+            }),
+
+            // 已经改过了，不确定改回来是否会造成破坏性变更，就还是保留这个用法
+            new webpack.DefinePlugin({ __APP_VERSION__: JSON.stringify(version) }),
         ].filter(Boolean),
 
         output: {
@@ -740,9 +741,11 @@ module.exports = (env, argv) => {
  */
 function getAssetOutputPath(url, resourcePath) {
     const isKaTeX = resourcePath.includes("KaTeX");
+    const isFontSource = resourcePath.includes("@fontsource");
     // `res` is the parent dir for our own assets in various layers
     // `dist` is the parent dir for KaTeX assets
-    const prefix = /^.*[/\\](dist|res)[/\\]/;
+    // `files` is the parent dir for @fontsource assets
+    const prefix = /^.*[/\\](dist|res|files)[/\\]/;
 
     /**
      * Only needed for https://github.com/element-hq/element-web/pull/15939
@@ -766,6 +769,10 @@ function getAssetOutputPath(url, resourcePath) {
     const compoundMatch = outputDir.match(compoundImportsPrefix);
     if (compoundMatch) {
         outputDir = outputDir.substring(compoundMatch.index + compoundMatch[0].length);
+    }
+
+    if (isFontSource) {
+        outputDir = "fonts";
     }
 
     if (isKaTeX) {

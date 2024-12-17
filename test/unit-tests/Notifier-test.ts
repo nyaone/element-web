@@ -43,8 +43,6 @@ import { mkThread } from "../test-utils/threads";
 import dis from "../../src/dispatcher/dispatcher";
 import { ThreadPayload } from "../../src/dispatcher/payloads/ThreadPayload";
 import { Action } from "../../src/dispatcher/actions";
-import { VoiceBroadcastChunkEventType, VoiceBroadcastInfoState } from "../../src/voice-broadcast";
-import { mkVoiceBroadcastInfoStateEvent } from "./voice-broadcast/utils/test-utils";
 import { addReplyToMessageContent } from "../../src/utils/Reply";
 
 jest.mock("../../src/utils/notifications", () => ({
@@ -85,16 +83,13 @@ describe("Notifier", () => {
         });
     };
 
-    const mkAudioEvent = (broadcastChunkContent?: object): MatrixEvent => {
-        const chunkContent = broadcastChunkContent ? { [VoiceBroadcastChunkEventType]: broadcastChunkContent } : {};
-
+    const mkAudioEvent = (): MatrixEvent => {
         return mkEvent({
             event: true,
             type: EventType.RoomMessage,
             user: "@user:example.com",
             room: "!room:example.com",
             content: {
-                ...chunkContent,
                 msgtype: MsgType.Audio,
                 body: "test audio message",
             },
@@ -320,24 +315,6 @@ describe("Notifier", () => {
             );
         });
 
-        it("should display the expected notification for a broadcast chunk with sequence = 1", () => {
-            const audioEvent = mkAudioEvent({ sequence: 1 });
-            Notifier.displayPopupNotification(audioEvent, testRoom);
-            expect(MockPlatform.displayNotification).toHaveBeenCalledWith(
-                "@user:example.com (!room1:server)",
-                "@user:example.com started a voice broadcast",
-                "data:image/png;base64,00",
-                testRoom,
-                audioEvent,
-            );
-        });
-
-        it("should display the expected notification for a broadcast chunk with sequence = 2", () => {
-            const audioEvent = mkAudioEvent({ sequence: 2 });
-            Notifier.displayPopupNotification(audioEvent, testRoom);
-            expect(MockPlatform.displayNotification).not.toHaveBeenCalled();
-        });
-
         it("should strip reply fallback", () => {
             const event = mkMessage({
                 msg: "Test",
@@ -351,7 +328,7 @@ describe("Notifier", () => {
                 user: mockClient.getSafeUserId(),
                 room: testRoom.roomId,
             });
-            addReplyToMessageContent(reply.getContent(), event, { includeLegacyFallback: true });
+            addReplyToMessageContent(reply.getContent(), event);
             Notifier.displayPopupNotification(reply, testRoom);
             expect(MockPlatform.displayNotification).toHaveBeenCalledWith(
                 "@bob:example.org (!room1:server)",
@@ -581,24 +558,6 @@ describe("Notifier", () => {
             Notifier.evaluateEvent(mkAudioEvent());
             expect(Notifier.displayPopupNotification).toHaveBeenCalledTimes(1);
         });
-
-        it("should not show a notification for broadcast info events in any case", () => {
-            // Let client decide to show a notification
-            mockClient.getPushActionsForEvent.mockReturnValue({
-                notify: true,
-                tweaks: {},
-            });
-
-            const broadcastStartedEvent = mkVoiceBroadcastInfoStateEvent(
-                "!other:example.org",
-                VoiceBroadcastInfoState.Started,
-                "@user:example.com",
-                "ABC123",
-            );
-
-            Notifier.evaluateEvent(broadcastStartedEvent);
-            expect(Notifier.displayPopupNotification).not.toHaveBeenCalled();
-        });
     });
 
     describe("setPromptHidden", () => {
@@ -624,8 +583,7 @@ describe("Notifier", () => {
                     content: { body: "this is a thread root" },
                 }),
                 testRoom.threadsTimelineSets[0]!.getLiveTimeline(),
-                false,
-                false,
+                { toStartOfTimeline: false, fromCache: false, addToState: true },
             );
 
             expect(fn).not.toHaveBeenCalled();

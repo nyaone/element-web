@@ -19,7 +19,6 @@ import { RoomMessageEventContent } from "matrix-js-sdk/src/types";
 import { PosthogAnalytics } from "../../../../../PosthogAnalytics";
 import SettingsStore from "../../../../../settings/SettingsStore";
 import { decorateStartSendingTime, sendRoundTripMetric } from "../../../../../sendTimePerformanceMetrics";
-import { RoomPermalinkCreator } from "../../../../../utils/permalinks/Permalinks";
 import { doMaybeLocalRoomAction } from "../../../../../utils/local-room";
 import { CHAT_EFFECTS } from "../../../../../effects";
 import { containsEmoji } from "../../../../../effects/utils";
@@ -40,9 +39,7 @@ export interface SendMessageParams {
     mxClient: MatrixClient;
     relation?: IEventRelation;
     replyToEvent?: MatrixEvent;
-    roomContext: IRoomState;
-    permalinkCreator?: RoomPermalinkCreator;
-    includeReplyLegacyFallback?: boolean;
+    roomContext: Pick<IRoomState, "timelineRenderingType" | "room">;
 }
 
 export async function sendMessage(
@@ -50,7 +47,7 @@ export async function sendMessage(
     isHTML: boolean,
     { roomContext, mxClient, ...params }: SendMessageParams,
 ): Promise<ISendEventResponse | undefined> {
-    const { relation, replyToEvent, permalinkCreator } = params;
+    const { relation, replyToEvent } = params;
     const { room } = roomContext;
     const roomId = room?.roomId;
 
@@ -95,11 +92,7 @@ export async function sendMessage(
             ) {
                 attachRelation(content, relation);
                 if (replyToEvent) {
-                    addReplyToMessageContent(content, replyToEvent, {
-                        permalinkCreator,
-                        // Exclude the legacy fallback for custom event types such as those used by /fireworks
-                        includeLegacyFallback: content.msgtype?.startsWith("m.") ?? true,
-                    });
+                    addReplyToMessageContent(content, replyToEvent);
                 }
             } else {
                 // instead of setting shouldSend to false as in SendMessageComposer, just return
@@ -184,7 +177,7 @@ export async function sendMessage(
 
 interface EditMessageParams {
     mxClient: MatrixClient;
-    roomContext: IRoomState;
+    roomContext: Pick<IRoomState, "timelineRenderingType">;
     editorStateTransfer: EditorStateTransfer;
 }
 

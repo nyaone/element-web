@@ -6,7 +6,7 @@ SPDX-License-Identifier: AGPL-3.0-only OR GPL-3.0-only
 Please see LICENSE files in the repository root for full details.
 */
 
-import React, { createRef } from "react";
+import React, { createRef, lazy } from "react";
 import {
     ClientEvent,
     createClient,
@@ -28,8 +28,6 @@ import { TooltipProvider } from "@vector-im/compound-web";
 // what-input helps improve keyboard accessibility
 import "what-input";
 
-import type NewRecoveryMethodDialog from "../../async-components/views/dialogs/security/NewRecoveryMethodDialog";
-import type RecoveryMethodRemovedDialog from "../../async-components/views/dialogs/security/RecoveryMethodRemovedDialog";
 import PosthogTrackers from "../../PosthogTrackers";
 import { DecryptionFailureTracker } from "../../DecryptionFailureTracker";
 import { IMatrixClientCreds, MatrixClientPeg } from "../../MatrixClientPeg";
@@ -121,7 +119,6 @@ import { ValidatedServerConfig } from "../../utils/ValidatedServerConfig";
 import { isLocalRoom } from "../../utils/localRoom/isLocalRoom";
 import { SDKContext, SdkContextClass } from "../../contexts/SDKContext";
 import { viewUserDeviceSettings } from "../../actions/handlers/viewUserDeviceSettings";
-import { cleanUpBroadcasts, VoiceBroadcastResumer } from "../../voice-broadcast";
 import GenericToast from "../views/toasts/GenericToast";
 import RovingSpotlightDialog from "../views/dialogs/spotlight/SpotlightDialog";
 import { findDMForUser } from "../../utils/dm/findDMForUser";
@@ -229,7 +226,6 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
     private focusNext: FocusNextType;
     private subTitleStatus: string;
     private prevWindowWidth: number;
-    private voiceBroadcastResumer?: VoiceBroadcastResumer;
 
     private readonly loggedInView = createRef<LoggedInViewType>();
     private dispatcherRef?: string;
@@ -429,7 +425,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             }
         } else if (
             (await cli.doesServerSupportUnstableFeature("org.matrix.e2e_cross_signing")) &&
-            !shouldSkipSetupEncryption(cli)
+            !(await shouldSkipSetupEncryption(cli))
         ) {
             // if cross-signing is not yet set up, do so now if possible.
             this.setStateForNewView({ view: Views.E2E_SETUP });
@@ -503,7 +499,6 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
         window.removeEventListener("resize", this.onWindowResized);
 
         this.stores.accountPasswordStore.clearPassword();
-        this.voiceBroadcastResumer?.destroy();
     }
 
     private onWindowResized = (): void => {
@@ -653,10 +648,9 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 break;
             case "logout":
                 LegacyCallHandler.instance.hangupAllCalls();
-                Promise.all([
-                    ...[...CallStore.instance.connectedCalls].map((call) => call.disconnect()),
-                    cleanUpBroadcasts(this.stores),
-                ]).finally(() => Lifecycle.logout(this.stores.oidcClientStore));
+                Promise.all([...[...CallStore.instance.connectedCalls].map((call) => call.disconnect())]).finally(() =>
+                    Lifecycle.logout(this.stores.oidcClientStore),
+                );
                 break;
             case "require_registration":
                 startAnyRegistrationFlow(payload as any);
@@ -1640,7 +1634,7 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             } else {
                 // otherwise check the server to see if there's a new one
                 try {
-                    newVersionInfo = await cli.getKeyBackupVersion();
+                    newVersionInfo = (await cli.getCrypto()?.getKeyBackupInfo()) ?? null;
                     if (newVersionInfo !== null) haveNewVersion = true;
                 } catch (e) {
                     logger.error("Saw key backup error but failed to check backup version!", e);
@@ -1649,16 +1643,12 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
             }
 
             if (haveNewVersion) {
-                Modal.createDialogAsync(
-                    import(
-                        "../../async-components/views/dialogs/security/NewRecoveryMethodDialog"
-                    ) as unknown as Promise<typeof NewRecoveryMethodDialog>,
+                Modal.createDialog(
+                    lazy(() => import("../../async-components/views/dialogs/security/NewRecoveryMethodDialog")),
                 );
             } else {
-                Modal.createDialogAsync(
-                    import(
-                        "../../async-components/views/dialogs/security/RecoveryMethodRemovedDialog"
-                    ) as unknown as Promise<typeof RecoveryMethodRemovedDialog>,
+                Modal.createDialog(
+                    lazy(() => import("../../async-components/views/dialogs/security/RecoveryMethodRemovedDialog")),
                 );
             }
         });
@@ -1685,8 +1675,6 @@ export default class MatrixChat extends React.PureComponent<IProps, IState> {
                 });
             }
         });
-
-        this.voiceBroadcastResumer = new VoiceBroadcastResumer(cli);
     }
 
     /**
