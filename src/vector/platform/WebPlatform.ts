@@ -31,7 +31,7 @@ function getNormalizedAppVersion(version: string): string {
 }
 
 export default class WebPlatform extends BasePlatform {
-    private static readonly VERSION = __APP_VERSION__!; // baked in by Webpack
+    private static readonly VERSION = process.env.VERSION!; // baked in by Webpack
 
     public constructor() {
         super();

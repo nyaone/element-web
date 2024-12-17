@@ -679,9 +679,6 @@ module.exports = (env, argv) => {
                 templateString: "<%= extras.VERSION %>",
                 extras: { VERSION },
             }),
-
-            // 已经改过了，不确定改回来是否会造成破坏性变更，就还是保留这个用法
-            new webpack.DefinePlugin({ __APP_VERSION__: JSON.stringify(version) }),
         ].filter(Boolean),
 
         output: {
